@@ -84,10 +84,6 @@ int main(int argc, char** argv) {
         move(LINES-1, 0);
         printw("\t\t\t%c", ch);
 
-        if (currentMode == NORMAL) {
-            mvaddch(x, y, ' ');  // Clear the previous vertical bar
-        }
-
         switch (currentMode) {
             case COMMAND:
                 if (ch == 'i') {
@@ -132,6 +128,30 @@ int main(int argc, char** argv) {
                         y = 0;
                         x++;
                     }
+                } else if (ch == KEY_UP) {  // Handle up arrow key
+                    if (x > 0) {
+                        x--;
+                        y = std::min(y, (int)lines[x].length());
+                    }
+                } else if (ch == KEY_DOWN) {  // Handle down arrow key
+                    if (x < lines.size()) {
+                        x++;
+                        y = std::min(y, (int)lines[x].length());
+                    }
+                } else if (ch == KEY_LEFT) {  // Handle left arrow key
+                    if (y > 0) {
+                        y--;
+                    } else if (x > 0) {
+                        x--;
+                        y = lines[x].length();
+                    }
+                } else if (ch == KEY_RIGHT) {  // Handle right arrow key
+                    if (y < lines[x].length()) {
+                        y++;  // Move right
+                    } else if (x < lines.size() - 1) {
+                        x++;
+                        y = 0;
+                    }
                 } else {
                     move(x, y);
                     line += ch;
@@ -149,9 +169,9 @@ int main(int argc, char** argv) {
                 }
                 break;
         }
-        if (currentMode == NORMAL) {
-            mvaddch(x, y, '|');
-        }
+        // if (currentMode == NORMAL) {
+        //     mvaddch(x, y, '|');
+        // }
         refresh();  // Refresh the screen
     }
 
